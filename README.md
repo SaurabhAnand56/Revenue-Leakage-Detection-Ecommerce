@@ -13,7 +13,7 @@
 
 **Identify where an e-commerce platform loses revenue due to pricing inefficiencies, excessive discounts, and out-of-stock situations — powered by Gemini 2.5 Flash AI**
 
-[![Live App](https://img.shields.io/badge/🚀_Live_Streamlit_App-FF4B4B?style=for-the-badge)](https://your-streamlit-app-link-here.streamlit.app)
+[![Live App](https://img.shields.io/badge/🚀_Live_Streamlit_App-FF4B4B?style=for-the-badge)](https://revenue-leakage-detection-ecommerce.streamlit.app/)
 [![Tableau Dashboard](https://img.shields.io/badge/📊_Tableau_Dashboard-E97627?style=for-the-badge)](https://public.tableau.com/app/profile/saurabhanand56/viz/RevenueLeakageDetection-FlipkartPricingAnalysis/E-CommerceDashboard)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabhanand56)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SaurabhAnand56)
@@ -79,7 +79,11 @@ revenue-leakage-detection/
 │       └── chart6_oos_impact.png
 │
 ├── 📁 dashboard/
-│   └── POWERBI_INSTRUCTIONS.md         # Power BI step-by-step guide
+│   └── Revenue_Leakage_Detection_Flipkart_Pricing_Analysis.twb         # Tableau Dashboard
+|       ├── Discount_vs_Ratings.png
+│       ├── E-Commerce_Dashboard.png
+│       ├── Risk_By_Category.png
+│       └── Risky_Sellers.png
 │
 ├── requirements.txt                    # Python dependencies
 ├── LICENSE                             # MIT License
