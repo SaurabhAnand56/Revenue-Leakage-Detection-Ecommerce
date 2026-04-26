@@ -313,6 +313,7 @@ def auto_chart(df_result: pd.DataFrame, question: str = ""):
     """Automatically pick and render the best chart for results."""
     if df_result is None or df_result.empty or len(df_result.columns) < 2:
         return
+
     num_cols = df_result.select_dtypes(include=[np.number]).columns.tolist()
     cat_cols = df_result.select_dtypes(exclude=[np.number]).columns.tolist()
     if not num_cols:
@@ -321,40 +322,56 @@ def auto_chart(df_result: pd.DataFrame, question: str = ""):
     y_col = num_cols[0]
     x_col = cat_cols[0] if cat_cols else df_result.columns[0]
 
+    # ── Force clean types — prevents ALL matplotlib category errors ──
+    df_plot = df_result[[x_col, y_col]].copy()
+    df_plot[x_col] = df_plot[x_col].fillna("Unknown").astype(str)
+    df_plot[y_col] = pd.to_numeric(df_plot[y_col], errors="coerce").fillna(0)
+    df_plot = df_plot[df_plot[x_col].str.strip() != ""]
+
+    x_labels = df_plot[x_col].tolist()
+    y_values = df_plot[y_col].tolist()
+
+    if not x_labels or not y_values:
+        return
+
     fig, ax = plt.subplots(figsize=(9, 4))
 
-    if any(w in question.lower() for w in ["trend", "month", "year", "over time", "growth"]):
-        ax.plot(range(len(df_result)), df_result[y_col],
-                marker="o", lw=2.5, color="#7F77DD", ms=5)
-        ax.fill_between(range(len(df_result)), df_result[y_col],
-                        alpha=0.15, color="#7F77DD")
-        step = max(1, len(df_result) // 8)
-        ax.set_xticks(range(0, len(df_result), step))
-        ax.set_xticklabels(
-            df_result[x_col].astype(str).iloc[::step],
-            rotation=45, ha="right", fontsize=8
-        )
-    elif len(df_result) <= 15:
-        colors = ["#E74C3C" if i < 3 else "#7F77DD" for i in range(len(df_result))]
-        x_labels = df_result[x_col].astype(str).tolist()
-        y_values = pd.to_numeric(df_result[y_col], errors='coerce').fillna(0).tolist()
-        ax.barh(x_labels, y_values, color=colors, edgecolor="none")
-        for i, v in enumerate(y_values):
-            ax.text(v * 1.01, i, f"{v:,.1f}", va="center",
-                    fontsize=9, color="#cdd9e5")
-    else:
-        x_labels = df_result[x_col].astype(str).tolist()
-        y_values = pd.to_numeric(df_result[y_col], errors='coerce').fillna(0).tolist()
-        ax.bar(x_labels, y_values, color="#7F77DD", edgecolor="none", alpha=0.85)
-        plt.xticks(rotation=45, ha="right", fontsize=8)
+    try:
+        if any(w in question.lower() for w in ["trend", "month", "year", "over time", "growth"]):
+            ax.plot(range(len(x_labels)), y_values,
+                    marker="o", lw=2.5, color="#7F77DD", ms=5)
+            ax.fill_between(range(len(x_labels)), y_values,
+                            alpha=0.15, color="#7F77DD")
+            step = max(1, len(x_labels) // 8)
+            ax.set_xticks(range(0, len(x_labels), step))
+            ax.set_xticklabels(x_labels[::step], rotation=45, ha="right", fontsize=8)
 
-    if question:
-        ax.set_title(question[:65], fontsize=11, fontweight="bold", pad=10)
+        elif len(df_plot) <= 15:
+            colors = ["#E74C3C" if i < 3 else "#7F77DD" for i in range(len(x_labels))]
+            y_pos  = list(range(len(x_labels)))
+            ax.barh(y_pos, y_values, color=colors, edgecolor="none")
+            ax.set_yticks(y_pos)
+            ax.set_yticklabels(x_labels, fontsize=9)
+            for i, v in enumerate(y_values):
+                ax.text(v * 1.01, i, f"{v:,.1f}", va="center",
+                        fontsize=8, color="#cdd9e5")
+        else:
+            x_pos = list(range(len(x_labels)))
+            ax.bar(x_pos, y_values, color="#7F77DD", edgecolor="none", alpha=0.85)
+            ax.set_xticks(x_pos)
+            ax.set_xticklabels(x_labels, rotation=45, ha="right", fontsize=8)
 
-    style_ax(ax)
-    plt.tight_layout()
-    st.pyplot(fig)
-    plt.close()
+        if question:
+            ax.set_title(question[:65], fontsize=11, fontweight="bold", pad=10)
+
+        style_ax(ax)
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    except Exception as e:
+        st.caption(f"Chart could not be rendered: {e}")
+    finally:
+        plt.close()
 
 
 # ═════════════════════════════════════════════════════════════
