@@ -336,14 +336,16 @@ def auto_chart(df_result: pd.DataFrame, question: str = ""):
         )
     elif len(df_result) <= 15:
         colors = ["#E74C3C" if i < 3 else "#7F77DD" for i in range(len(df_result))]
-        ax.barh(df_result[x_col].astype(str), df_result[y_col],
-                color=colors, edgecolor="none")
-        for i, v in enumerate(df_result[y_col]):
+        x_labels = df_result[x_col].astype(str).tolist()
+        y_values = pd.to_numeric(df_result[y_col], errors='coerce').fillna(0).tolist()
+        ax.barh(x_labels, y_values, color=colors, edgecolor="none")
+        for i, v in enumerate(y_values):
             ax.text(v * 1.01, i, f"{v:,.1f}", va="center",
                     fontsize=9, color="#cdd9e5")
     else:
-        ax.bar(df_result[x_col].astype(str), df_result[y_col],
-               color="#7F77DD", edgecolor="none", alpha=0.85)
+        x_labels = df_result[x_col].astype(str).tolist()
+        y_values = pd.to_numeric(df_result[y_col], errors='coerce').fillna(0).tolist()
+        ax.bar(x_labels, y_values, color="#7F77DD", edgecolor="none", alpha=0.85)
         plt.xticks(rotation=45, ha="right", fontsize=8)
 
     if question:
