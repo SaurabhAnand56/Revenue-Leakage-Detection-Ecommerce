@@ -126,7 +126,7 @@ st.markdown("<hr style='margin:4px 0 16px 0'>", unsafe_allow_html=True)
 # ─────────────────────────────────────────────────────────────
 GITHUB_CSV = (
     "https://raw.githubusercontent.com/SaurabhAnand56/"
-    "revenue-leakage-detection/main/data/cleaned_data.csv"
+    "Revenue-Leakage-Detection-Ecommerce/main/data/cleaned_data.csv"
 )
 
 @st.cache_data(show_spinner="Loading Flipkart dataset...")
